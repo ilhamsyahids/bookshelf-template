@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/ilhamsyahids/bookshelf-template/storage"
+	"github.com/ilhamsyahids/bookshelf-template/utils"
 )
 
 type API struct {
@@ -46,7 +47,7 @@ func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
 	// output success response
 	buf := new(bytes.Buffer)
 	encoder := json.NewEncoder(buf)
-	encoder.Encode(books)
+	encoder.Encode(utils.NewSuccessResp(books))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 	w.Write(buf.Bytes())
