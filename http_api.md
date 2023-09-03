@@ -14,7 +14,7 @@ This endpoint is used to fetch all the latest books by date published. Books cou
 
 **Example Request:**
 
-```json
+```bash
 GET /books?query=Harry%20Potter&page=2&limit=2
 ```
 
@@ -77,7 +77,7 @@ This endpoint is used to fetch a book by its ID.
 
 **Example Request:**
 
-```json
+```bash
 GET /books/1
 ```
 
@@ -260,7 +260,7 @@ This endpoint is used to delete a book by its ID.
 
 **Example Request:**
 
-```json
+```bash
 DELETE /books/1
 ```
 
