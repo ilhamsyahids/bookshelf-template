@@ -9,8 +9,8 @@ This endpoint is used to fetch all the latest books by date published. Books cou
 **Query Parameter:**
 
 - `query` (String) => Requested query. This is for querying books by book title
-- `page` (Int) => Requested page. If not provided, the first page will be returned. Default value is `1`.
-- `limit` (Int) => Number of books return. Default value is `10`
+- `page` (Int) => Requested page. If not provided, the first page will be returned. Default value is `1` and at least `1`.
+- `limit` (Int) => Number of books return. Default value is `10` and at least `1`.
 
 **Example Request:**
 
