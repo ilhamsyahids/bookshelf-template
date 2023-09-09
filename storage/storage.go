@@ -36,6 +36,6 @@ func (s *Storage) Load(filename string) error {
 	return nil
 }
 
-func (s *Storage) GetBooks() ([]Book, error) {
+func (s *Storage) GetBooks(query string, page, limit int) ([]Book, error) {
 	return s.booksData, nil
 }
