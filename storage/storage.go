@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strings"
 )
 
 type Book struct {
@@ -37,5 +38,25 @@ func (s *Storage) Load(filename string) error {
 }
 
 func (s *Storage) GetBooks(query string, page, limit int) ([]Book, error) {
-	return s.booksData, nil
+	var books []Book
+	for _, book := range s.booksData {
+		lowerTitle := strings.ToLower(book.Title)
+		lowerQuery := strings.ToLower(query)
+		if strings.Contains(lowerTitle, lowerQuery) {
+			books = append(books, book)
+		}
+	}
+
+	// pagination
+	startIndex := (page - 1) * limit
+	endIndex := page * limit
+	if startIndex >= len(books) {
+		return []Book{}, nil
+	}
+	if endIndex > len(books) {
+		endIndex = len(books)
+	}
+	books = books[(page-1)*limit : endIndex]
+
+	return books, nil
 }
