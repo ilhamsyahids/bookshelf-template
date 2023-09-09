@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/ilhamsyahids/bookshelf-template/storage"
 	"github.com/ilhamsyahids/bookshelf-template/utils"
+	"gopkg.in/validator.v2"
 )
 
 type API struct {
@@ -15,10 +17,15 @@ type API struct {
 }
 
 type APIConfig struct {
-	BookStorage storage.Storage
+	BookStorage storage.Storage `validate:"nonnil"`
 }
 
 func NewAPI(config APIConfig) (*API, error) {
+	err := validator.Validate(config)
+	if err != nil {
+		return nil, fmt.Errorf("invalid API config: %w", err)
+	}
+
 	return &API{bookStorage: config.BookStorage}, nil
 }
 
