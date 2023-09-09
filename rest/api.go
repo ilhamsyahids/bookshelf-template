@@ -44,7 +44,7 @@ func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
 		pageStr = "1"
 	}
 	page, err := strconv.Atoi(pageStr)
-	if err != nil {
+	if err != nil || page < 1 {
 		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, ErrInvalidPage.Error()))
 		return
 	}
@@ -54,7 +54,7 @@ func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
 		limitStr = "10"
 	}
 	limit, err := strconv.Atoi(limitStr)
-	if err != nil {
+	if err != nil || limit < 1 {
 		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, ErrInvalidLimit.Error()))
 		return
 	}
