@@ -60,3 +60,9 @@ func (s *Storage) GetBooks(query string, page, limit int) ([]Book, error) {
 
 	return books, nil
 }
+
+func (s *Storage) CreateBook(book Book) (*Book, error) {
+	book.ID = fmt.Sprintf("%d", len(s.booksData)+1)
+	s.booksData = append(s.booksData, book)
+	return &book, nil
+}

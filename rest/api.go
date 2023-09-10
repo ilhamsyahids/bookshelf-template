@@ -35,6 +35,7 @@ func (api *API) GetHandler() http.Handler {
 	r.Get("/", api.serveHealthCheck)
 
 	r.Get("/books", api.serveGetBooks)
+	r.Post("/books", api.serveCreateBook)
 
 	return r
 }
@@ -43,7 +44,9 @@ func (api *API) serveHealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("It's working!"))
 }
 
+// Path: GET `/books“
 func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
+	// get query params (query, page, limit)
 	query := r.URL.Query().Get("query")
 
 	pageStr := r.URL.Query().Get("page")
@@ -66,6 +69,7 @@ func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// get books from storage
 	books, err := api.bookStorage.GetBooks(query, page, limit)
 	if err != nil {
 		render.Render(w, r, utils.NewErrorResp(http.StatusInternalServerError, err.Error()))
@@ -74,4 +78,56 @@ func (api *API) serveGetBooks(w http.ResponseWriter, r *http.Request) {
 
 	// return success response
 	render.Render(w, r, utils.NewSuccessResp(books))
+}
+
+type createBookReq struct {
+	ISBN      string `json:"isbn" validate:"nonzero"`
+	Title     string `json:"title" validate:"nonzero"`
+	Author    string `json:"author" validate:"nonzero"`
+	Published string `json:"published" validate:"nonzero"`
+}
+
+func (b *createBookReq) Bind(r *http.Request) error {
+	if b.ISBN == "" {
+		return ErrMissingISBN
+	}
+	if b.Title == "" {
+		return ErrMissingTitle
+	}
+	if b.Author == "" {
+		return ErrMissingAuthor
+	}
+	if b.Published == "" {
+		return ErrMissingPublished
+	}
+	return nil
+}
+
+// Path: POST `/books`
+func (api *API) serveCreateBook(w http.ResponseWriter, r *http.Request) {
+	// get body request
+	bodyReq := &createBookReq{}
+	// validate body request
+	err := render.Bind(r, bodyReq)
+	if err != nil {
+		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	// create book
+	book := storage.Book{
+		ISBN:      bodyReq.ISBN,
+		Title:     bodyReq.Title,
+		Author:    bodyReq.Author,
+		Published: bodyReq.Published,
+	}
+	resBook, err := api.bookStorage.CreateBook(book)
+	if err != nil {
+		render.Render(w, r, utils.NewErrorResp(http.StatusInternalServerError, err.Error()))
+		return
+	}
+	book.ID = resBook.ID
+
+	// return success response
+	render.Render(w, r, utils.NewSuccessResp(book))
 }
