@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var BookNotFound = fmt.Errorf("book not found")
+
 type Book struct {
 	ID        string `json:"id"`
 	ISBN      string `json:"isbn"`
@@ -73,7 +75,7 @@ func (s *Storage) GetBookByID(id string) (*Book, error) {
 			return &book, nil
 		}
 	}
-	return nil, fmt.Errorf("book with id %s not found", id)
+	return nil, BookNotFound
 }
 
 func (s *Storage) UpdateBook(id string, book Book) (*Book, error) {
@@ -94,7 +96,15 @@ func (s *Storage) UpdateBook(id string, book Book) (*Book, error) {
 			return &s.booksData[i], nil
 		}
 	}
-	return nil, fmt.Errorf("book with id %s not found", id)
+	return nil, BookNotFound
 }
 
-// TODO: implement DeleteBook
+func (s *Storage) DeleteBook(id string) error {
+	for i, book := range s.booksData {
+		if book.ID == id {
+			s.booksData = append(s.booksData[:i], s.booksData[i+1:]...)
+			return nil
+		}
+	}
+	return BookNotFound
+}
