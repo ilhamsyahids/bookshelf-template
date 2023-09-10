@@ -67,4 +67,13 @@ func (s *Storage) CreateBook(book Book) (*Book, error) {
 	return &book, nil
 }
 
-// TODO: implement GetBookByID, UpdateBook, DeleteBook
+func (s *Storage) GetBookByID(id string) (*Book, error) {
+	for _, book := range s.booksData {
+		if book.ID == id {
+			return &book, nil
+		}
+	}
+	return nil, fmt.Errorf("book with id %s not found", id)
+}
+
+// TODO: implement UpdateBook, DeleteBook

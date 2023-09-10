@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -35,8 +36,9 @@ func (api *API) GetHandler() http.Handler {
 	r.Get("/", api.serveHealthCheck)
 
 	r.Get("/books", api.serveGetBooks)
+	r.Get("/books/{id}", api.serveGetBookByID)
 	r.Post("/books", api.serveCreateBook)
-	// TODO: Add routes for get book by id, update book, and delete book
+	// TODO: Add routes for update book, and delete book
 
 	return r
 }
@@ -108,11 +110,27 @@ func (b *createBookReq) Bind(r *http.Request) error {
 // Path: GET `/books/{id}`
 func (api *API) serveGetBookByID(w http.ResponseWriter, r *http.Request) {
 	// get path params (id)
+	idStr := chi.URLParam(r, "id")
 	// validate path params (id)
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id < 1 {
+		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, ErrInvalidID.Error()))
+		return
+	}
 
 	// get book from storage
+	book, err := api.bookStorage.GetBookByID(idStr)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			render.Render(w, r, utils.NewErrorResp(http.StatusNotFound, ErrNotFoundBook.Error()))
+			return
+		}
+		render.Render(w, r, utils.NewErrorResp(http.StatusInternalServerError, err.Error()))
+		return
+	}
 
 	// return success response
+	render.Render(w, r, utils.NewSuccessResp(book))
 }
 
 // Path: POST `/books`

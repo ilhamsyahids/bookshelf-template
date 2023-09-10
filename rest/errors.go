@@ -12,4 +12,7 @@ var (
 	ErrMissingAuthor    = errors.New("ERR_AUTHOR_MISSING")
 	ErrMissingISBN      = errors.New("ERR_ISBN_MISSING")
 	ErrMissingPublished = errors.New("ERR_PUBLISHED_MISSING")
+
+	ErrInvalidID    = errors.New("ERR_INVALID_ID")
+	ErrNotFoundBook = errors.New("ERR_BOOK_NOT_FOUND")
 )
