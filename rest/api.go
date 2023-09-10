@@ -38,7 +38,8 @@ func (api *API) GetHandler() http.Handler {
 	r.Get("/books", api.serveGetBooks)
 	r.Get("/books/{id}", api.serveGetBookByID)
 	r.Post("/books", api.serveCreateBook)
-	// TODO: Add routes for update book, and delete book
+	r.Put("/books/{id}", api.serveUpdateBook)
+	// TODO: Add routes for delete book
 
 	return r
 }
@@ -106,7 +107,6 @@ func (b *createBookReq) Bind(r *http.Request) error {
 	return nil
 }
 
-// TODO: implement this
 // Path: GET `/books/{id}`
 func (api *API) serveGetBookByID(w http.ResponseWriter, r *http.Request) {
 	// get path params (id)
@@ -162,18 +162,59 @@ func (api *API) serveCreateBook(w http.ResponseWriter, r *http.Request) {
 	render.Render(w, r, utils.NewSuccessResp(book))
 }
 
-// TODO: implement this
+type updateBookReq struct {
+	ISBN      string `json:"isbn"`
+	Title     string `json:"title"`
+	Author    string `json:"author"`
+	Published string `json:"published"`
+}
+
+func (b *updateBookReq) Bind(r *http.Request) error {
+	if b.ISBN == "" && b.Title == "" && b.Author == "" && b.Published == "" {
+		return ErrMissingUpdateData
+	}
+	return nil
+}
+
 // Path: PUT `/books/{id}`
 func (api *API) serveUpdateBook(w http.ResponseWriter, r *http.Request) {
 	// get path params (id)
+	idStr := chi.URLParam(r, "id")
 	// validate path params (id)
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id < 1 {
+		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, ErrInvalidID.Error()))
+		return
+	}
 
 	// get body request
+	bodyReq := &updateBookReq{}
 	// validate body request
+	err = render.Bind(r, bodyReq)
+	if err != nil {
+		render.Render(w, r, utils.NewErrorResp(http.StatusBadRequest, ErrMissingUpdateData.Error()))
+		return
+	}
 
 	// update book from storage
+	book := &storage.Book{
+		ISBN:      bodyReq.ISBN,
+		Title:     bodyReq.Title,
+		Author:    bodyReq.Author,
+		Published: bodyReq.Published,
+	}
+	book, err = api.bookStorage.UpdateBook(idStr, *book)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			render.Render(w, r, utils.NewErrorResp(http.StatusNotFound, ErrNotFoundBook.Error()))
+			return
+		}
+		render.Render(w, r, utils.NewErrorResp(http.StatusInternalServerError, err.Error()))
+		return
+	}
 
 	// return success response
+	render.Render(w, r, utils.NewSuccessResp(book))
 }
 
 // TODO: implement this

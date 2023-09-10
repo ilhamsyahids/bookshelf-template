@@ -15,4 +15,6 @@ var (
 
 	ErrInvalidID    = errors.New("ERR_INVALID_ID")
 	ErrNotFoundBook = errors.New("ERR_BOOK_NOT_FOUND")
+
+	ErrMissingUpdateData = errors.New("ERR_MISSING_UPDATE_DATA")
 )
