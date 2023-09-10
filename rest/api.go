@@ -36,6 +36,7 @@ func (api *API) GetHandler() http.Handler {
 
 	r.Get("/books", api.serveGetBooks)
 	r.Post("/books", api.serveCreateBook)
+	// TODO: Add routes for get book by id, update book, and delete book
 
 	return r
 }
@@ -103,6 +104,17 @@ func (b *createBookReq) Bind(r *http.Request) error {
 	return nil
 }
 
+// TODO: implement this
+// Path: GET `/books/{id}`
+func (api *API) serveGetBookByID(w http.ResponseWriter, r *http.Request) {
+	// get path params (id)
+	// validate path params (id)
+
+	// get book from storage
+
+	// return success response
+}
+
 // Path: POST `/books`
 func (api *API) serveCreateBook(w http.ResponseWriter, r *http.Request) {
 	// get body request
@@ -130,4 +142,29 @@ func (api *API) serveCreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// return success response
 	render.Render(w, r, utils.NewSuccessResp(book))
+}
+
+// TODO: implement this
+// Path: PUT `/books/{id}`
+func (api *API) serveUpdateBook(w http.ResponseWriter, r *http.Request) {
+	// get path params (id)
+	// validate path params (id)
+
+	// get body request
+	// validate body request
+
+	// update book from storage
+
+	// return success response
+}
+
+// TODO: implement this
+// Path: DELETE `/books/{id}`
+func (api *API) serveDeleteBook(w http.ResponseWriter, r *http.Request) {
+	// get path params (id)
+	// validate path params (id)
+
+	// delete book from storage
+
+	// return success response
 }

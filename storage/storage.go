@@ -66,3 +66,5 @@ func (s *Storage) CreateBook(book Book) (*Book, error) {
 	s.booksData = append(s.booksData, book)
 	return &book, nil
 }
+
+// TODO: implement GetBookByID, UpdateBook, DeleteBook
