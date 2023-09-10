@@ -248,6 +248,15 @@ Content-Type: application/json
         }
     ```
 
+- Missing update data:
+
+    ```json
+        {
+            "ok": false,
+            "message": "ERR_MISSING_UPDATE_DATA"
+        }
+    ```
+
 ## Delete Book
 
 DELETE: `/books/:id`
