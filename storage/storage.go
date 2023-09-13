@@ -55,16 +55,62 @@ func (s *Storage) CreateBook(book Book) (*Book, error) {
 }
 
 func (s *Storage) GetBookByID(id string) (*Book, error) {
-	// TODO: implement this
-	return nil, nil
+	// get book from database
+	book := Book{}
+	sqlQuery := `SELECT * FROM books WHERE id = ?`
+	err := s.sqlClient.Get(&book, sqlQuery, id)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, BookNotFound
+		}
+		return nil, err
+	}
+	return &book, nil
 }
 
 func (s *Storage) UpdateBook(id string, book Book) (*Book, error) {
-	// TODO: implement this
-	return nil, nil
+	// update book from database
+	sqlQuery := `UPDATE books SET`
+	args := []interface{}{}
+	if book.ISBN != "" {
+		sqlQuery += ` isbn = ?,`
+		args = append(args, book.ISBN)
+	}
+	if book.Title != "" {
+		sqlQuery += ` title = ?,`
+		args = append(args, book.Title)
+	}
+	if book.Author != "" {
+		sqlQuery += ` author = ?,`
+		args = append(args, book.Author)
+	}
+	if book.Published != "" {
+		sqlQuery += ` published = ?,`
+		args = append(args, book.Published)
+	}
+
+	// remove last comma
+	sqlQuery = sqlQuery[:len(sqlQuery)-1]
+
+	// add where clause
+	sqlQuery += ` WHERE id = ?`
+	args = append(args, id)
+
+	_, err := s.sqlClient.Exec(sqlQuery, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	// get updated book
+	return s.GetBookByID(id)
 }
 
 func (s *Storage) DeleteBook(id string) error {
-	// TODO: implement this
+	// delete book from database
+	sqlQuery := `DELETE FROM books WHERE id = ?`
+	_, err := s.sqlClient.Exec(sqlQuery, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
