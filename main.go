@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ilhamsyahids/bookshelf-template/rest"
@@ -12,8 +13,10 @@ import (
 
 const addr = ":8080"
 
+const envSQLDSN = "SQL_DSN"
+
 func main() {
-	sqlDSN := "mysql:root@tcp(127.0.0.1:3306)/books"
+	sqlDSN := os.Getenv(envSQLDSN)
 	sqlClient, err := sqlx.Connect("mysql", sqlDSN)
 	if err != nil {
 		log.Fatalf("unable to connect to database due: %v", err)
