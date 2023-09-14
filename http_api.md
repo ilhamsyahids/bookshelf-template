@@ -114,7 +114,11 @@ Content-Type: application/json
 
 POST: `/books`
 
-This endpoint is used to create a new book.
+This endpoint is used to create a new book. To use this endpoint, you need to provide API key in the request header.
+
+**Request Header:**
+
+- `X-API-Key` (String, _REQUIRED_) => API key
 
 **Request Body:**
 
@@ -127,6 +131,7 @@ This endpoint is used to create a new book.
 
 ```json
 POST /books
+X-API-Key: <api-key>
 
 {
     "isbn": "0653737570553",
@@ -196,7 +201,11 @@ Content-Type: application/json
 
 PUT: `/books/:id`
 
-This endpoint is used to update a book by its ID.
+This endpoint is used to update a book by its ID. To use this endpoint, you need to provide API key in the request header.
+
+**Request Header:**
+
+- `X-API-Key` (String, _REQUIRED_) => API key
 
 **Path Parameter:**
 
@@ -213,6 +222,7 @@ This endpoint is used to update a book by its ID.
 
 ```json
 PUT /books/1
+X-API-Key: <api-key>
 
 {
     "title": "Harry Potter 3"
@@ -261,7 +271,11 @@ Content-Type: application/json
 
 DELETE: `/books/:id`
 
-This endpoint is used to delete a book by its ID.
+This endpoint is used to delete a book by its ID. To use this endpoint, you need to provide API key in the request header.
+
+**Request Header:**
+
+- `X-API-Key` (String, _REQUIRED_) => API key
 
 **Path Parameter:**
 
@@ -271,6 +285,7 @@ This endpoint is used to delete a book by its ID.
 
 ```bash
 DELETE /books/1
+X-API-Key: <api-key>
 ```
 
 **Success Response:**
