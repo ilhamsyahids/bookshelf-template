@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/ilhamsyahids/bookshelf-template/rest/middleware"
 	"github.com/ilhamsyahids/bookshelf-template/storage"
 	"github.com/ilhamsyahids/bookshelf-template/utils"
 	"gopkg.in/validator.v2"
@@ -37,9 +38,15 @@ func (api *API) GetHandler() http.Handler {
 
 	r.Get("/books", api.serveGetBooks)
 	r.Get("/books/{id}", api.serveGetBookByID)
-	r.Post("/books", api.serveCreateBook)
-	r.Put("/books/{id}", api.serveUpdateBook)
-	r.Delete("/books/{id}", api.serveDeleteBook)
+
+	r.Group(func(r chi.Router) {
+		// verify API key
+		r.Use(middleware.AccessAPIKeyVerifier())
+
+		r.Post("/books", api.serveCreateBook)
+		r.Put("/books/{id}", api.serveUpdateBook)
+		r.Delete("/books/{id}", api.serveDeleteBook)
+	})
 
 	return r
 }
